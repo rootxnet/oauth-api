@@ -44,4 +44,13 @@ class CustomTokenView(TokenView):
 
 
 class CustomRevokeTokenView(RevokeTokenView):
-    pass
+    def post(self, request, *args, **kwargs):
+        url, headers, body, status = self.create_revocation_response(request)
+
+        body = json.loads(body) if body else {}
+        body['success'] = True if status == 200 else False
+        response = HttpResponse(content=json.dumps(body) or "", status=status)
+
+        for k, v in headers.items():
+            response[k] = v
+        return response
