@@ -18,6 +18,9 @@ class RegistrationAPIView(APIView):
     serializer_class = RegistrationSerializer
 
     def post(self, request):
+        """
+           Register users by username and password
+        """
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -29,6 +32,9 @@ class CustomTokenView(TokenView):
 
     @method_decorator(sensitive_post_parameters("password"))
     def post(self, request, *args, **kwargs):
+        """
+          Generate user's access token
+        """
         url, headers, body, status = self.create_token_response(request)
         content = {}
         if status == 200:
@@ -39,12 +45,18 @@ class CustomTokenView(TokenView):
                 app_authorized.send(
                     sender=self, request=request,
                     token=token)
+
+                # Only access_token in response
                 content = {'access_token': access_token}
+
         return HttpResponse(content=json.dumps(content), status=status)
 
 
 class CustomRevokeTokenView(RevokeTokenView):
     def post(self, request, *args, **kwargs):
+        """
+         Log off by revoking user's access token
+        """
         url, headers, body, status = self.create_revocation_response(request)
 
         body = json.loads(body) if body else {}

@@ -6,8 +6,14 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 
 class UserManager(BaseUserManager):
+    """
+     Override default UserManager because we don't need email in this case
+    """
 
     def create_user(self, username, password=None):
+        """
+         Create and save a user with the given username and password.
+        """
         if username is None:
             raise TypeError('Users must have a username.')
 
@@ -18,7 +24,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, password):
-
+        """
+         Create and save a superuser with the given username and password
+        """
         if password is None:
             raise TypeError('Superusers must have a password.')
 
